@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
     image: alacarte-wrapper:local
     container_name: alacarte-wrapper
+    # Wrapper binary + upstream rootfs are amd64-only. Pinning the platform makes
+    # the build/run path explicit on arm64 hosts (Apple Silicon emulates via Rosetta).
+    platform: linux/amd64
     volumes:
       - ./data/wrapper:/app/rootfs/data
     # Bypass the image's `bash -c "/app/wrapper $args"` entrypoint and hand
@@ -26,6 +29,8 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: alacarte-web
+    # Upstream apple-music-downloader image is published amd64-only.
+    platform: linux/amd64
     depends_on:
       - wrapper
     environment:

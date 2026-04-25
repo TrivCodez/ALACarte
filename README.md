@@ -49,7 +49,7 @@ Output lands in `/music/<Artist>/<Album>/01. Track.flac` (or `/music/<Artist>/Si
 
 ## Requirements
 
-- Linux host (x86_64 or arm64) — the decryption wrapper is binary-only
+- **`linux/amd64` (x86_64)** — the FairPlay wrapper binary and the upstream downloader image are amd64-only. On Apple Silicon Macs, Docker Desktop transparently emulates amd64 via Rosetta. On native arm64 Linux (Raspberry Pi, ARM cloud VPS), enable `qemu-user-static` / `binfmt_misc` to run amd64 containers, or use an x86_64 host.
 - Docker + Docker Compose
 - An **Apple Music paid subscription**
 
