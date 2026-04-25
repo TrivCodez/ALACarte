@@ -23,8 +23,8 @@ services:
 
   web:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: alacarte-web
     depends_on:
       - wrapper

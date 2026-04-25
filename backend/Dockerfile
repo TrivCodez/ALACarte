@@ -1,12 +1,21 @@
+# Build the frontend (Vite outputs to backend/public via outDir: '../backend/public').
+FROM node:22-bookworm-slim AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install --no-audit --no-fund
+COPY frontend ./
+RUN npm run build
+# Build output is now at /app/backend/public
+
 # Build app deps with Node 22
 FROM node:22-bookworm-slim AS node-build
 WORKDIR /app
-COPY package*.json ./
+COPY backend/package*.json ./
 RUN npm install --omit=dev --no-audit --no-fund
-COPY server.mjs ./
-COPY routes ./routes
-COPY lib ./lib
-COPY public ./public
+COPY backend/server.mjs ./
+COPY backend/routes ./routes
+COPY backend/lib ./lib
+COPY --from=frontend-build /app/backend/public ./public
 
 # Source stage for Node 22 runtime binaries
 FROM node:22-bookworm-slim AS node-runtime
