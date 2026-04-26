@@ -2,12 +2,12 @@ import { isAuthDisabled } from './requireAuth.mjs'
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
 
-function parseSource(value) {
+function parseSourceHost(value) {
   if (typeof value !== 'string') return null
   const trimmed = value.trim()
   if (!trimmed) return null
   try {
-    return new URL(trimmed).origin
+    return new URL(trimmed).host
   } catch {
     return null
   }
@@ -19,12 +19,13 @@ export function originGuard() {
     if (!req.path.startsWith('/api/')) return next()
     if (SAFE_METHODS.has(req.method)) return next()
 
-    const expected = `${req.protocol}://${req.headers.host}`
-    const origin = parseSource(req.headers.origin)
-    if (origin && origin === expected) return next()
+    const expectedHost = req.headers.host
 
-    const referer = parseSource(req.headers.referer)
-    if (referer && referer === expected) return next()
+    const originHost = parseSourceHost(req.headers.origin)
+    if (originHost && originHost === expectedHost) return next()
+
+    const refererHost = parseSourceHost(req.headers.referer)
+    if (refererHost && refererHost === expectedHost) return next()
 
     return res.status(403).json({ error: 'forbidden origin' })
   }
